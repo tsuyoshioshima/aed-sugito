@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>杉戸町AEDマップ</title>
+    <style>
+        #map-canvas {
+            width: 600px;
+            height: 600px;
+        }
+    </style>
+    <script>
+    </script>
+</head>
+
+<body>
+    <!-- canvas -->
+    <div id="map-canvas"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBb_kcP2m7tsFpDC71vRNomTeJj54mui_I "></script>
+    <script>
+        $.getJSON("aed-sugito.json", function (data) {
+            var latitude = data[0].latitude;
+            var longitude = data[0].longitude;
+            /*
+                        var len = data.length;
+                        for (var i = 0; i < len; i++) {
+                            console.log(data[i]);
+                        }
+            */
+            // <div id="map-canvas"></div>
+            var mapDiv = document.getElementById("map-canvas");
+
+            // 地図のオプション
+            var mapOptions = {
+                center: new google.maps.LatLng(latitude, longitude),	// 位置座標
+                zoom: 11,	// ズーム値
+            };
+
+            // インスタンスを作成
+            var map = new google.maps.Map(mapDiv, mapOptions);
+
+            // マーカーのオプション
+            var markerOptions = {
+                map: map,	// 設置する地図
+                position: new google.maps.LatLng(latitude, longitude),	// 位置座標
+            };
+
+            // インスタンスを作成
+            var marker = new google.maps.Marker(markerOptions);
+        });
+    </script>
+</body>
+<!--
+tel: 設置場所_電話番号
+latitude:  設置場所_緯度
+longitude: 設置場所_経度
+kana: 設置場所_カナ
+name: 設置場所_名称
+address: 設置場所_住所
+-->
+
+</html>
