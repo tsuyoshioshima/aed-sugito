@@ -1,3 +1,10 @@
+<!--
+JSONファイルのプロパティ
+tel: 設置場所_電話番号
+kana: 設置場所_カナ
+address: 設置場所_住所
+-->
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -6,10 +13,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>杉戸町AEDマップ</title>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+    <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
     <style>
+        h1,
+        p {
+            text-align: center;
+        }
+
         #map-canvas {
             width: 600px;
             height: 600px;
+            margin: 0 auto;
         }
     </style>
     <script>
@@ -17,50 +33,60 @@
 </head>
 
 <body>
-    <!-- canvas -->
-    <div id="map-canvas"></div>
+    <div class="container">
+        <h1>埼玉県北葛飾郡杉戸町AEDマップ</h1>
+        <!-- canvas -->
+        <div id="map-canvas"></div>
+        <p>※2017年6月時点</p>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyBb_kcP2m7tsFpDC71vRNomTeJj54mui_I "></script>
     <script>
         $.getJSON("aed-sugito.json", function (data) {
-            var latitude = data[0].latitude;
-            var longitude = data[0].longitude;
-            /*
-                        var len = data.length;
-                        for (var i = 0; i < len; i++) {
-                            console.log(data[i]);
-                        }
-            */
+            var latitude = [];      // 設置場所_緯度
+            var longitude = [];     // 設置場所_経度
+            var name = [];          // 設置場所_名称
+            var len = data.length;  // データ件数
+            for (var i = 0; i < len; i++) {
+                latitude[i] = data[i].latitude;
+                longitude[i] = data[i].longitude;
+                name[i] = data[i].name;
+            }
             // <div id="map-canvas"></div>
             var mapDiv = document.getElementById("map-canvas");
 
             // 地図のオプション
             var mapOptions = {
-                center: new google.maps.LatLng(latitude, longitude),	// 位置座標
-                zoom: 11,	// ズーム値
+                center: new google.maps.LatLng(latitude[0], longitude[0]),	// 位置座標
+                zoom: 15,	// ズーム値
             };
 
             // インスタンスを作成
             var map = new google.maps.Map(mapDiv, mapOptions);
 
-            // マーカーのオプション
-            var markerOptions = {
-                map: map,	// 設置する地図
-                position: new google.maps.LatLng(latitude, longitude),	// 位置座標
-            };
+            for (var i = 0; i < len; i++) {
+                /*
+                // マーカーのオプション
+                var markerOptions = {
+                    map: map,	// 設置する地図
+                    position: new google.maps.LatLng(latitude[i], longitude[i]),	// 位置座標
+                };
+                // マーカーのインスタンスを作成
+                var marker = new google.maps.Marker(markerOptions);
+                */
 
-            // インスタンスを作成
-            var marker = new google.maps.Marker(markerOptions);
+                // 情報ウィンドウのオプション
+                var infoWindowsOptions = {
+                    map: map,	// 設置する地図
+                    position: new google.maps.LatLng(latitude[i], longitude[i]),	// 位置座標
+                    content: name[i]
+                };
+                // 情報ウィンドウのインスタンスを作成
+                var infoWindow = new google.maps.InfoWindow(infoWindowsOptions);
+            }
+
         });
     </script>
 </body>
-<!--
-tel: 設置場所_電話番号
-latitude:  設置場所_緯度
-longitude: 設置場所_経度
-kana: 設置場所_カナ
-name: 設置場所_名称
-address: 設置場所_住所
--->
 
 </html>
